@@ -1,0 +1,5 @@
+---
+- import_playbook: openstack/prepare.yml
+- import_playbook: prepare.yml
+- import_playbook: /root/openshift-ansible/playbooks/prerequisites.yml
+- import_playbook: /root/openshift-ansible/playbooks/deploy_cluster.yml 

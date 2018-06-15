@@ -1,0 +1,9 @@
+---
+- hosts: openstack
+  name: OpenStack Director Playbook
+
+  tasks:
+
+  - import_tasks: facts.yml
+  - import_tasks: delete.yml
+  - import_tasks: servers.yml

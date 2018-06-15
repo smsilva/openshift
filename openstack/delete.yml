@@ -1,0 +1,25 @@
+---
+- name: Delete Floating IP Adresses
+  shell: >
+    openstack floating ip delete {{ item }}
+  with_items:
+    - 192.168.1.30
+    - 192.168.1.40
+  ignore_errors: yes
+
+- name: Delete Ports
+  shell: >
+    openstack port delete {{ item }}
+  with_items:
+    master0-port
+    infra0-port
+  ignore_errors: yes
+
+- name: Delete Instances
+  shell: >
+    openstack server delete {{ item }}
+  with_items:
+    - master0
+    - infra0
+  ignore_errors: yes
+    

@@ -1,0 +1,8 @@
+#cloud-config
+cloud_config_modules:
+- disk_setup
+- mounts
+
+hostname: master0
+fqdn: master0.example.com
+

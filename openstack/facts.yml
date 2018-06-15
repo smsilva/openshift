@@ -1,0 +1,8 @@
+---
+- set_fact:
+    openstack_public_network_id: $(openstack network show public_network -f value -c id)
+    openstack_public_subnet_id: $(openstack subnet show public_subnet -c id -f value)
+    openstack_internal_network_id: $(openstack network show lab_network -f value -c id)
+    openstack_internal_subnet_id: $(openstack subnet show lab_subnet -c id -f value)
+    openstack_default_security_group_id: $(openstack security group list --project lab | grep "Default security group" | cut -d " " -f 2)
+

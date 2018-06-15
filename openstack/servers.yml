@@ -1,0 +1,69 @@
+---   
+- name: Master0 Port Creation
+  shell: >
+    openstack port create \
+      --disable-port-security \
+      --no-security-group \
+      --fixed-ip subnet={{ openstack_internal_subnet_id }},ip-address=10.0.0.30 \
+      --network {{ openstack_internal_network_id }} \
+      master0-port
+
+- name: Master0 Float IP Creation
+  shell: >
+    openstack floating ip create \
+      --port=master0-port \
+      --floating-ip-address=192.168.1.30 \
+      {{ openstack_public_network_id }}
+
+- name: Master0 Instance Creation
+  shell: >
+    openstack server create \
+    --nic port-id=master0-port \
+    --flavor m1.large \
+    --image centos \
+    --key-name server \
+    --security-group {{ openstack_default_security_group_id }} \
+    --user-data=./cloud-init/master0.yml \
+    --wait \
+    master0
+
+- name: Infra0 Port Creation
+  shell: >
+    openstack port create \
+      --disable-port-security \
+      --no-security-group \
+      --fixed-ip subnet={{ openstack_internal_subnet_id }},ip-address=10.0.0.40 \
+      --network {{ openstack_internal_network_id }} \
+      infra0-port
+
+- name: Infra0 Float IP Creation
+  shell: >
+    openstack floating ip create \
+      --port=infra0-port \
+      --floating-ip-address=192.168.1.40 \
+      {{ openstack_public_network_id }}
+
+- name: Infra0 Instance Creation
+  shell: >
+    openstack server create \
+    --nic port-id=infra0-port \
+    --flavor m1.medium \
+    --image centos \
+    --key-name server \
+    --security-group {{ openstack_default_security_group_id }} \
+    --user-data=./cloud-init/node0.yml \
+    --wait \
+    infra0
+
+- name: wait for SSH on each created instance
+  command: >
+    ssh -oBatchMode=yes -oStrictHostKeyChecking=no
+    centos@{{ item }} true
+  register: result
+  until: result|success
+  retries: 30
+  delay: 10
+  with_items:
+    - 192.168.1.30
+    - 192.168.1.40
+
